@@ -20,6 +20,8 @@ function render() {
 function Start() {
     window.ThreeJsData = {};
 
+    console.log("THREE.REVISION:", THREE.REVISION);
+
     let scene, renderer, camera, raycaster, orbitalControls;
 
     scene = CreateScene();
@@ -270,20 +272,18 @@ function GetMouseCoords(event) {
 function CheckIntersects(event, eventType) {
     event.preventDefault();
 
-    let mousePos = GetMouseCoords(event);
-
-    let canvasSize = GetCanvasContainerSize();
-
+    const rect = window.ThreeJsData.renderer.domElement.getBoundingClientRect();
     let mouse = new THREE.Vector2();
-    mouse.x = (mousePos.x / canvasSize.width) * 2 - 1;
-    mouse.y = -(mousePos.y / canvasSize.height) * 2 + 1;
+
+    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
     let raycaster = window.ThreeJsData.raycaster;
     let camera = window.ThreeJsData.camera;
     raycaster.setFromCamera(mouse, camera);
 
     let objects = SelectionObjects;
-    const intersects = raycaster.intersectObjects(objects, false);
+    const intersects = raycaster.intersectObjects(objects, true);
     let intersected = intersects.length > 0 ? intersects[0].object : null;
 
     console.log(" intersects.length = ", intersects.length);
