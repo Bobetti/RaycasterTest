@@ -30,7 +30,7 @@ function Start() {
     orbitalControls = AddOrbitalControls(camera, renderer);
 
     CreateLight(scene);
-    AddGeometry(scene);
+    //AddGeometry(scene);
     AddResizeEvent(camera, renderer);
 
     window.ThreeJsData.scene = scene;
