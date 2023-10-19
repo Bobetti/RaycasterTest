@@ -5,6 +5,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 window.ThreeJsData = {};
 let SelectionObjects = [];
 let canvasIdName = "threejs-main";
+const frustumSize = 2000;
 
 window.onload = function () {
     Start();
@@ -62,7 +63,7 @@ function CreateRenderer() {
     let canvasSize = GetCanvasContainerSize();
 
     let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio, canvasSize.height);
+    renderer.setPixelRatio(canvasSize.window, canvasSize.height);
     renderer.setSize(canvasSize.width, canvasSize.height);
 
     var dome = document.getElementById(canvasIdName);
@@ -83,17 +84,23 @@ function CreateCamera(renderer, scene) {
 
     let widthHalf = canvasSize.width / 2;
     let heightHalf = canvasSize.height / 2;
+
+    //camera = new THREE.OrthographicCamera(-widthHalf, widthHalf, heightHalf, -heightHalf, 0, 2000);
+
+    /// Suggestion --
+    const aspect = canvasSize.width / canvasSize.height;
     camera = new THREE.OrthographicCamera(
-        -widthHalf,
-        widthHalf,
-        heightHalf,
-        -heightHalf,
-        -1000,
+        (frustumSize * aspect) / -2,
+        (frustumSize * aspect) / 2,
+        frustumSize / 2,
+        frustumSize / -2,
+        0,
         2000
     );
+    /// -------------
+
     camera.position.set(CameraPositions[0].x, CameraPositions[0].y, CameraPositions[0].z);
     camera.position.z = 500;
-
     camera.zoom = 0.54;
 
     return camera;
@@ -229,10 +236,18 @@ function Resize(camera, renderer) {
     let widthHalf = newWidth / 2;
     let heightHalf = newHeight / 2;
 
-    camera.left = -widthHalf;
-    camera.right = widthHalf;
-    camera.top = heightHalf;
-    camera.bottom = -heightHalf;
+    // camera.left = -widthHalf;
+    // camera.right = widthHalf;
+    // camera.top = heightHalf;
+    // camera.bottom = -heightHalf;
+
+    /// Suggestion --
+    const aspect = canvasSize.width / canvasSize.height;
+    camera.left = (-frustumSize * aspect) / 2;
+    camera.right = (frustumSize * aspect) / 2;
+    camera.top = frustumSize / 2;
+    camera.bottom = -frustumSize / 2;
+    /// -------------
 
     camera.updateProjectionMatrix();
     renderer.setSize(canvasSize.width, canvasSize.height);
